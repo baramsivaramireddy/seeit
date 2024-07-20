@@ -1,3 +1,5 @@
+
+'use client'
 import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
 
 const DrawTool = () => {
@@ -60,16 +62,18 @@ const DrawTool = () => {
 
     return (
         <div className='relative'>
-            <canvas
+
+
+            {typeof window !== 'undefined' && <canvas
                 id='canvas'
                 ref={canvasRef}
                 width={window.innerWidth}
                 height={window.innerHeight}
             >
                 Canvas
-            </canvas>
+            </canvas>}
 
-          
+
         </div>
     );
 };

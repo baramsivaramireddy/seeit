@@ -11,7 +11,10 @@
 body{
     overflow: hidden ;
 }
-#canva {
-    display: block; 
 
-}
+dialog::backdrop {
+    background-color: rgb(247, 235, 235);
+  }
+  
+
+  

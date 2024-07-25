@@ -12,9 +12,5 @@ body{
     overflow: hidden ;
 }
 
-dialog::backdrop {
-    background-color: rgb(247, 235, 235);
-  }
-  
 
   

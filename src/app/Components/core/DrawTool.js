@@ -1,7 +1,7 @@
 
 'use client'
 import React, { useRef, useLayoutEffect, forwardRef, useEffect, useState } from 'react';
-
+import PanelComponent from './Panel';
 import HelperComponent from './HelperComponent';
 import ToolBar from '@/app/Components/core/toolBar'
 const DrawTool = () => {
@@ -10,12 +10,31 @@ const DrawTool = () => {
     const previousePoints = useRef([0, 0])
     const [isClient, setIsClient] = useState(false)
     const helperComponentRef = useRef(null)
-    // tools rect line   ,null freehand
+    const [fillStyle, setFillStyle] = useState('black');
+    const [strokeStyle, setStrokeStyle] = useState('black');
+    const [lineWidth, setLineWidth] = useState(2)
     const selectedTool = useRef(null)
-    const handlePointerMove = (e) => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        ctx.lineWidth = 2;
+    // tools rect,  line  ,  circle,text,null freehand
+    const handleLineWidth = (e) => {
+
+
+        setLineWidth(e.target.value)
+    }
+
+    const handlefillStyle = (e) => {
+
+
+        setFillStyle(e.target.value)
+    }
+
+    const handlefillStroke = (e) => {
+        setStrokeStyle(e.target.value)
+    }
+
+
+    const handlePointerMove = (e, ctx) => {
+
+
 
         if (drawingRef.current) {
 
@@ -52,7 +71,8 @@ const DrawTool = () => {
     }
     const drawRect = (ctx, x, y, width, height, px, py) => {
         ctx.beginPath()
-        ctx.strokeRect(x, y, width, height)
+        ctx.rect(x, y, width, height)
+        ctx.stroke()
         ctx.closePath()
 
 
@@ -67,17 +87,12 @@ const DrawTool = () => {
 
     }
 
-    const handlePointerDown = (e) => {
+    const handlePointerDown = (e, ctx) => {
         drawingRef.current = true;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        ctx.lineWidth = 2;
         if (selectedTool.current == 'rect') {
-            ctx.strokeStyle = "black"
-            ctx.fillStyle = "black"
             drawRect(ctx, e.x, e.y, 100, 100)
         } else if (selectedTool.current == 'circle') {
-            ctx.strokeStyle = "black"
+
             drawCircle(ctx, e.x, e.y, 6)
         }
     };
@@ -101,12 +116,14 @@ const DrawTool = () => {
         }
     }, []);
 
-    const handleKeyDown = (e) => {
-
-
+    const handleKeyDown = (e, ctx) => {
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        if (e.key === 'R' || e.key === 'r') {
+        
+        if (selectedTool.current == 'text') {
+
+            ctx.fillText('kajsdlkj', e.x, e.y)
+        }
+        else if (e.key === 'R' || e.key === 'r') {
             selectedTool.current = 'rect';
         } else if (e.key === 'l' || e.key === "L") {
             selectedTool.current = 'line';
@@ -117,12 +134,17 @@ const DrawTool = () => {
         else if (e.key == 0) {
             selectedTool.current = null
         }
+        else if (e.key == "k") {
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
         else if (e.key == 'c') {
             selectedTool.current = "circle"
         }
-        else if (e.key == "c" && e.altkey) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
+        else if (e.key == 'a') {
+            selectedTool.current = "text"
         }
+
         else if (e.key == 'h' || e.key == 'H') {
 
             helperComponentRef.current.showModal()
@@ -132,13 +154,24 @@ const DrawTool = () => {
         }
     };
 
+    const handleWriting = (e, ctx) => {
+
+        console.log(e.x, e.y)
+
+    }
     useEffect(() => {
         const canvas = canvasRef.current;
+
+        const ctx = canvas.getContext('2d');
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = strokeStyle;
+        // ctx.fillStyle = fillStyle;
         if (canvas) {
-            canvas.addEventListener('pointerdown', handlePointerDown);
+            canvas.addEventListener('pointerdown', (e) => { handlePointerDown(e, ctx) });
             canvas.addEventListener('pointerup', handlePointerUp);
-            canvas.addEventListener('pointermove', handlePointerMove);
-            window.addEventListener('keydown', handleKeyDown);
+            canvas.addEventListener('pointermove', (e) => { handlePointerMove(e, ctx) });
+            window.addEventListener('keydown', (e) => { handleKeyDown(e, ctx) });
+            canvas.addEventListener('dblclick', (e) => { handleWriting(e, ctx) })
 
         }
         window.addEventListener('resize', handleBrowserResize);
@@ -153,7 +186,7 @@ const DrawTool = () => {
 
             window.removeEventListener('resize', handleBrowserResize);
         };
-    }, []);
+    }, [lineWidth, strokeStyle, fillStyle]);
 
 
 
@@ -181,6 +214,16 @@ const DrawTool = () => {
 
                     <HelperComponent
                         ref={helperComponentRef} />
+                </div>
+                <div className='absolute top-5 left-5'>
+                    <PanelComponent
+                        fillStyle={fillStyle}
+                        lineWidth={lineWidth}
+                        strokeStyle={strokeStyle}
+                        handleLineWidth={handleLineWidth}
+                        handlefillStroke={handlefillStroke}
+                        handlefillStyle={handlefillStyle}
+                    />
                 </div>
             </div>
         </>)

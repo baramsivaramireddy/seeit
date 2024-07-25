@@ -28,7 +28,7 @@ const HelperComponent = forwardRef((props, ref) => {
                     <span>free pen</span>
                 </div>
                 <div className="flex items-center">
-                    <span className="font-semibold">Ctrl + C command</span>
+                    <span className="font-semibold">k command</span>
                     <span className="mx-2">-</span>
                     <span>clear the canvas</span>
                 </div>
@@ -44,6 +44,11 @@ const HelperComponent = forwardRef((props, ref) => {
                 </div>
                 <div className="flex items-center">
                     <span className="font-semibold">e command</span>
+                    <span className="mx-2">-</span>
+                    <span>Eraser commands</span>
+                </div>
+                <div className="flex items-center">
+                    <span className="font-semibold">a command</span>
                     <span className="mx-2">-</span>
                     <span>Eraser commands</span>
                 </div>
